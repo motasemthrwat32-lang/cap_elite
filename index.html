@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07070a">
+<title>CAP ELITE | Personal Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@500;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>try{if(localStorage.getItem("cap_elite_theme")==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section id="loginScreen" class="login">
+  <div class="login-art">
+    <div class="big" dir="ltr">CAP</div>
+    <h2>نظام التدريب الشخصي <span class="gtext">الاحترافي</span></h2>
+    <p>ابنِ برامج تدريب لعملائك بخريطة عضلات وشرح كامل لكل تمرين، وصدّرها صورة فخمة جاهزة للإرسال.</p>
+
+  </div>
+  <div class="login-side">
+    <div class="login-card">
+      <div class="login-logo"><i class="fa-solid fa-dumbbell"></i></div>
+      <h1 dir="ltr">CAP <span class="gtext">ELITE</span></h1>
+      <p class="sub">أهلاً يا كابتن، أدخل رمز الدخول لفتح النظام</p>
+      <form id="loginForm" autocomplete="off">
+        <label>رمز المدرب</label>
+        <div class="pass-wrap">
+          <i class="fa-solid fa-lock"></i>
+          <input id="accessCode" type="password" placeholder="••••••••" required>
+          <button id="toggleCode" class="eye" type="button" aria-label="إظهار الرمز"><i class="fa-solid fa-eye"></i></button>
+        </div>
+        <button class="btn btn-gold btn-block" type="submit" style="margin-top:16px;padding:15px"><i class="fa-solid fa-right-to-bracket"></i> دخول النظام</button>
+        <p id="loginError" class="login-err"></p>
+      </form>
+      <div class="login-foot">PERSONAL TRAINING SYSTEM</div>
+    </div>
+  </div>
+</section>
+
+<div id="app" hidden>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand" dir="ltr">
+        <div class="brand-logo"><i class="fa-solid fa-dumbbell"></i></div>
+        <div><b>CAP <span class="gold">ELITE</span></b><small>TRAINING SYSTEM</small></div>
+      </div>
+      <div class="coach-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="min-width:0;">
+            <small><i class="fa-solid fa-user-tie gold"></i> الكابتن</small>
+            <b class="js-coach"></b>
+            <div id="coachSubInfo" class="coach-sub-info" style="font-size:10.5px;color:var(--gold2);margin-top:3px;font-weight:700;"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button type="button" class="btn-theme-toggle js-theme-toggle" title="تبديل المظهر (فاتح / داكن)">
+              <i class="fa-solid fa-moon"></i>
+            </button>
+            <button type="button" class="btn-side-logout js-logout" title="تسجيل الخروج">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> خروج
+            </button>
+          </div>
+        </div>
+      </div>
+      <nav class="nav">
+        <div class="nav-label">الأقسام الرئيسية</div>
+        <button type="button" class="nav-tab-btn active" data-tab="gym"><i class="fa-solid fa-dumbbell"></i> تمارين الجيم</button>
+        <button type="button" class="nav-tab-btn" data-tab="nutrition"><i class="fa-solid fa-utensils"></i> برنامج التغذية</button>
+        <div class="nav-label" style="margin-top:14px">تنقل داخل البرنامج</div>
+        <button type="button" data-go="secCats"><i class="fa-solid fa-layer-group"></i> أقسام التمارين</button>
+        <button type="button" data-go="secBuild"><i class="fa-solid fa-user-gear"></i> بناء البرنامج</button>
+        <button type="button" data-go="secPreview"><i class="fa-solid fa-eye"></i> المعاينة</button>
+        <button type="button" class="js-export"><i class="fa-solid fa-file-image"></i> تصدير PNG</button>
+        <button type="button" class="js-pdf"><i class="fa-solid fa-file-pdf"></i> تصدير PDF</button>
+        <div class="nav-label" style="margin-top:14px">الحساب</div>
+        <button type="button" class="nav-logout-btn js-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج</button>
+      </nav>
+      <div class="side-meter">
+        <small>التمارين في البرنامج</small>
+        <div class="n"><span class="js-count gtext">0</span></div>
+        <div class="bar"><span id="sideBar"></span></div>
+        <button type="button" class="btn btn-ghost btn-sm btn-block js-logout" style="color:#fca5a5;"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل خروج</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="mtop">
+        <div class="brand" dir="ltr">
+          <div class="brand-logo"><i class="fa-solid fa-dumbbell"></i></div>
+          <b>CAP <span class="gold">ELITE</span></b>
+        </div>
+        <div class="who">
+          <button type="button" class="btn-theme-toggle js-theme-toggle" title="تبديل المظهر (فاتح / داكن)">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+          <span class="js-coach"></span>
+          <button type="button" class="btn-mtop-logout js-logout" title="تسجيل الخروج">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> خروج
+          </button>
+        </div>
+      </div>
+
+      <header class="hero">
+        <img class="bg" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1800&q=80" alt="">
+        <div class="hero-ghost" dir="ltr">TRAIN HARD</div>
+        <div class="hero-in">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <span class="badge"><span class="live"></span> PERSONAL TRAINING SYSTEM</span>
+            <button type="button" class="hero-logout-btn js-logout">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج (<span class="js-coach"></span>)
+            </button>
+          </div>
+          <h1 dir="ltr">CAP <span class="gtext">/ <span class="js-coach"></span></span></h1>
+          <p>صمّم برامج تدريب احترافية في دقائق، مع خريطة العضلات المستهدفة وشرح كامل لكل تمرين.</p>
+          <div class="hero-kpis">
+            <div class="kpi"><b id="heroCount">...</b><span>تمرين متاح</span></div>
+            <div class="kpi"><b>7</b><span>أقسام تدريب</span></div>
+            <div class="kpi"><b class="js-count">0</b><span>في برنامجك</span></div>
+          </div>
+        </div>
+        <div class="ticker" dir="ltr">
+          <div class="ticker-track">
+            <span>MUSCLE MAP</span><span>شرح الأداء بالعربي</span><span>EXPORT PNG</span><span>EXPORT PDF</span><span>نصائح وأخطاء شائعة</span><span>IPHONE READY</span><span>ترتيب ووقت راحة</span>
+            <span>MUSCLE MAP</span><span>شرح الأداء بالعربي</span><span>EXPORT PNG</span><span>EXPORT PDF</span><span>نصائح وأخطاء شائعة</span><span>IPHONE READY</span><span>ترتيب ووقت راحة</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- التبويبات الرئيسية لاختيار أقسام الموقع (تمارين الجيم / التغذية / أقسام قادمة) -->
+      <nav class="hub-tabs" id="hubTabs">
+        <button type="button" class="hub-tab active" data-tab="gym">
+          <div class="hub-tab-icon"><i class="fa-solid fa-dumbbell"></i></div>
+          <div class="hub-tab-info">
+            <h3>تمارين الجيم وجدول التدريب</h3>
+            <p>الأقسام الـ 9، بناء الجدول، والمعاينة الحية والتصدير</p>
+          </div>
+          <span class="hub-badge"><b class="js-count">0</b> تمرين</span>
+        </button>
+
+        <button type="button" class="hub-tab" data-tab="nutrition">
+          <div class="hub-tab-icon"><i class="fa-solid fa-utensils"></i></div>
+          <div class="hub-tab-info">
+            <h3>برنامج التغذية والنظام الغذائي</h3>
+            <p>حاسبة السعرات والماكروز، جدول الوجبات، وتصدير الخطة</p>
+          </div>
+          <span class="hub-badge nut">جاهز للعميل</span>
+        </button>
+      </nav>
+
+      <!-- 1) واجهة التمارين والرياضات المتخصصة -->
+      <div id="viewGym" class="app-view active">
+        <!-- شريط اختيار الرياضة والتخصص (18 رياضة شاملة) -->
+        <div class="sport-bar-wrap" id="sportBarWrap">
+          <div class="sport-bar-header">
+            <div>
+              <h4 id="activeSportTitle"><i class="fa-solid fa-dumbbell gold"></i> <span>رياضة: كمال أجسام وجيم</span></h4>
+              <p style="margin:2px 0 0;font-size:11.5px;color:var(--muted)">اختر الرياضة لاستعراض تمارينها المتخصصة أو إضافة تمارين جديدة</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <button type="button" class="btn btn-gold btn-sm" id="openAddCustomExBtn">
+                <i class="fa-solid fa-plus"></i> إضافة تمرين من عندك
+              </button>
+            </div>
+          </div>
+          <div class="sport-pills" id="sportPills"></div>
+        </div>
+
+        <section id="secCats" class="card card-pad section">
+        <div class="head">
+          <div class="ic"><i class="fa-solid fa-layer-group"></i></div>
+          <div><h2 id="secCatsTitle">أقسام التمارين</h2><p id="secCatsSub">STEP 01 • CHOOSE CATEGORY</p></div>
+          <div class="grow"></div>
+          <button type="button" class="btn btn-outline btn-sm" id="btnQuickAddEx" style="margin-inline-end:8px;"><i class="fa-solid fa-plus"></i> تمرين جديد</button>
+          <span class="step-tag">01</span>
+        </div>
+        <div class="cats" id="cats">
+          <button class="cat" type="button" data-cat="chest"><span class="cat-no">01</span><span class="ci"><i class="fa-solid fa-heart-pulse"></i></span><b>الصدر</b><span class="cn" data-count="chest">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+          <button class="cat" type="button" data-cat="back"><span class="cat-no">02</span><span class="ci"><i class="fa-solid fa-dumbbell"></i></span><b>الظهر</b><span class="cn" data-count="back">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+          <button class="cat" type="button" data-cat="legs"><span class="cat-no">03</span><span class="ci"><i class="fa-solid fa-person-walking"></i></span><b>الرجل</b><span class="cn" data-count="legs">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+          <button class="cat" type="button" data-cat="shoulders"><span class="cat-no">04</span><span class="ci"><i class="fa-solid fa-shield-halved"></i></span><b>الكتف</b><span class="cn" data-count="shoulders">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+          <button class="cat" type="button" data-cat="biceps"><span class="cat-no">05</span><span class="ci"><i class="fa-solid fa-hand-fist"></i></span><b>بايسبس</b><span class="cn" data-count="biceps">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+          <button class="cat" type="button" data-cat="triceps"><span class="cat-no">06</span><span class="ci"><i class="fa-solid fa-bolt"></i></span><b>ترايسبس</b><span class="cn" data-count="triceps">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+          <button class="cat" type="button" data-cat="abs"><span class="cat-no">07</span><span class="ci"><i class="fa-solid fa-fire"></i></span><b>بطن</b><span class="cn" data-count="abs">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+          <button class="cat" type="button" data-cat="cardio"><span class="cat-no">08</span><span class="ci"><i class="fa-solid fa-person-running"></i></span><b>كارديو</b><span class="cn" data-count="cardio">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+          <button class="cat" type="button" data-cat="warmup"><span class="cat-no">09</span><span class="ci"><i class="fa-solid fa-stopwatch"></i></span><b>تسخين</b><span class="cn" data-count="warmup">—</span><i class="fa-solid fa-arrow-left go"></i></button>
+        </div>
+        <p class="db-status"><span id="dbDot" class="dot"></span><span id="dbText">جاري تحميل التمارين...</span><button id="dbRetry" class="btn btn-outline btn-sm" type="button" hidden><i class="fa-solid fa-rotate"></i> إعادة المحاولة</button></p>
+      </section>
+
+      <div id="secBuild" class="layout">
+        <section class="card card-pad">
+          <div class="head">
+            <div class="ic"><i class="fa-solid fa-user-gear"></i></div>
+            <div><h2>بيانات البرنامج</h2><p>STEP 02 • PROGRAM INFO</p></div>
+            <div class="grow"></div>
+            <span class="step-tag">02</span>
+          </div>
+          <div class="profile">
+            <button id="avatarBtn" class="avatar" type="button" aria-label="اختيار صورة">
+              <div class="avatar-in" id="avatarIn">ع</div>
+              <span class="cam"><i class="fa-solid fa-camera"></i></span>
+            </button>
+            <div>
+              <b>صورة العميل</b>
+              <small>هتظهر في المعاينة والصورة المصدّرة</small>
+              <div class="acts">
+                <button id="choosePhoto" class="btn btn-ghost btn-sm" type="button"><i class="fa-solid fa-image"></i> اختيار</button>
+                <button id="removePhoto" class="btn btn-ghost btn-sm" type="button"><i class="fa-solid fa-trash"></i> حذف</button>
+              </div>
+            </div>
+            <input id="photoInput" type="file" accept="image/*" hidden>
+          </div>
+          <div class="field"><label><i class="fa-solid fa-user"></i> اسم العميل</label><input id="clientName" placeholder="أحمد محمد"></div>
+          <div class="field"><label><i class="fa-solid fa-file-signature"></i> اسم البرنامج</label><input id="workoutName" placeholder="Push Day"></div>
+          <div class="field">
+            <label><i class="fa-solid fa-ranking-star"></i> مستوى اللاعب</label>
+            <select id="levelSelect">
+              <option value="beginner">مبتدئ</option>
+              <option value="intermediate">متوسط</option>
+              <option value="expert">متقدم</option>
+            </select>
+          </div>
+          <div class="stats">
+            <div class="stat"><strong id="stTotal">0</strong><span>تمرين</span></div>
+            <div class="stat"><strong id="stStrength">0</strong><span>مقاومة</span></div>
+            <div class="stat"><strong id="stCardio">0</strong><span>كارديو</span></div>
+          </div>
+          <div class="save">
+            <button id="exportBtn" class="btn btn-gold btn-block" type="button"><i class="fa-solid fa-file-image"></i> تصدير البرنامج PNG</button>
+            <button id="exportPdfBtn" class="btn btn-outline btn-block" type="button"><i class="fa-solid fa-file-pdf"></i> تصدير البرنامج PDF</button>
+            <button id="shareBtn" class="btn btn-gold btn-block" type="button" hidden><i class="fa-solid fa-share-nodes"></i> مشاركة / حفظ الصورة على iPhone</button>
+            <button id="downloadBtn" class="btn btn-outline btn-block" type="button"><i class="fa-solid fa-download"></i> تحميل صورة البرنامج</button>
+            <button id="openBtn" class="btn btn-ghost btn-block" type="button"><i class="fa-solid fa-image"></i> فتح الصورة للحفظ بالضغط المطوّل</button>
+            <p id="exportStatus" class="status"></p>
+            <p class="hint">على iPhone وأندرويد: اضغط «تصدير البرنامج» ثم اختار «مشاركة / حفظ في الملفات» أو احفظ الصورة مباشرة.</p>
+          </div>
+        </section>
+        <section class="card card-pad">
+          <div class="head">
+            <div class="ic"><i class="fa-solid fa-list-check"></i></div>
+            <div><h2>التمارين المختارة</h2><p>SELECTED EXERCISES</p></div>
+            <div class="grow"></div>
+            <button id="clearAll" class="btn btn-ghost btn-sm" type="button" hidden><i class="fa-solid fa-broom"></i> مسح الكل</button>
+          </div>
+          <div id="selList" class="sel-list"></div>
+        </section>
+      </div>
+
+      <section id="secPreview" class="card section">
+        <div class="pv-head">
+          <div class="pv-av" id="pvAvatar">ع</div>
+          <div style="min-width:0;position:relative;z-index:1">
+            <div class="pv-kick">STEP 03 • LIVE PREVIEW</div>
+            <h3 id="pvWorkout">برنامج تدريبي</h3>
+            <p id="pvClient">برنامج تدريبي احترافي</p>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;">
+              <span id="pvLevel" class="lvl">المستوى: مبتدئ</span>
+              <span id="pvDate" class="pv-date-badge"><i class="fa-regular fa-calendar-days"></i> <span id="pvDateText"></span></span>
+            </div>
+          </div>
+        </div>
+        <div id="pvList" class="pv-list"></div>
+      </section>
+      </div> <!-- نهاية viewGym -->
+
+      <!-- 2) واجهة برنامج التغذية -->
+      <div id="viewNutrition" class="app-view" style="display:none;"></div>
+
+      <footer class="footer"><b>CAP ELITE</b> • PERSONAL TRAINING SYSTEM • <span class="js-coach"></span></footer>
+    </main>
+  </div>
+
+  <nav class="dock">
+    <button type="button" data-dock="gym" class="active"><i class="fa-solid fa-dumbbell"></i>التمارين</button>
+    <button type="button" data-go="secCats"><i class="fa-solid fa-layer-group"></i>الأقسام</button>
+    <button type="button" data-go="secBuild"><i class="fa-solid fa-list-check"></i>البرنامج<span class="badge-n js-count-badge" hidden>0</span></button>
+    <button type="button" data-dock="nutrition"><i class="fa-solid fa-utensils"></i>التغذية</button>
+    <button type="button" class="js-theme-toggle" title="تبديل المظهر"><i class="fa-solid fa-moon"></i>المظهر</button>
+    <button type="button" class="fab js-export"><i class="fa-solid fa-file-arrow-down"></i>تصدير</button>
+    <button type="button" class="js-logout" style="color:#f87171 !important;"><i class="fa-solid fa-arrow-right-from-bracket"></i>خروج</button>
+  </nav>
+
+  <!-- الزر العائم للمساعد الذكي AI (يظهر داخل المنصة فقط بعد تسجيل الدخول) -->
+  <button id="openAiBtn" class="ai-fab-btn" type="button" aria-label="فتح المساعد الذكي AI">
+    <i class="fa-solid fa-wand-magic-sparkles"></i>
+    <span>مساعد CAP AI</span>
+  </button>
+</div>
+
+<div id="picker" class="modal">
+  <div class="mbox">
+    <button class="mclose" type="button" data-close="picker" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    <div class="mhead"><h2 id="pickerTitle">التمارين</h2><p>اضغط «تفاصيل» أو صورة التمرين عشان تشوف الشرح وطريقة الأداء</p></div>
+    <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="pickerSearch" type="search" placeholder="ابحث باسم التمرين..."></div>
+    <div id="pickerCount" class="pcount"></div>
+    <div id="pickerList" class="plist"></div>
+  </div>
+</div>
+
+<div id="detail" class="modal top">
+  <div class="mbox">
+    <button class="mclose" type="button" data-close="detail" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    <div class="mhead"><h2 id="detailTitle">تفاصيل التمرين</h2><p id="detailSub" dir="ltr" style="text-align:right"></p></div>
+    <div id="detailBody" class="dbody"></div>
+    <div class="dfoot"><button id="detailAction" class="btn btn-gold btn-block" type="button"></button></div>
+  </div>
+</div>
+
+<div id="viewer" class="viewer" hidden>
+  <button id="viewerClose" class="btn btn-gold btn-sm close" type="button"><i class="fa-solid fa-xmark"></i> إغلاق</button>
+  <p>اضغط على الصورة ضغطة مطوّلة واختر «حفظ الصورة».</p>
+  <img id="viewerImg" alt="">
+</div>
+
+<div id="toast" class="toast"></div>
+
+
+<!-- نافذة المساعد الذكي AI -->
+<div id="aiModal" class="modal top">
+  <div class="mbox" style="max-width: 600px;">
+    <button class="mclose" type="button" data-close="aiModal" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    <div class="mhead">
+      <h2><i class="fa-solid fa-wand-magic-sparkles" style="color:#c084fc;"></i> كابتن CAP الذكي (AI Coach)</h2>
+      <p>مساعد ذكي شامل لتوليد البرامج الرياضية، الخطط الغذائية، والاستشارات التدريبية</p>
+    </div>
+    
+    <!-- تبويبات المساعد الذكي -->
+    <div class="ai-tabs">
+      <button type="button" class="ai-tab active" data-aitab="generator"><i class="fa-solid fa-bolt"></i> توليد برنامج</button>
+      <button type="button" class="ai-tab" data-aitab="nutrition"><i class="fa-solid fa-apple-whole"></i> تغذية الرياضات</button>
+      <button type="button" class="ai-tab" data-aitab="chat"><i class="fa-solid fa-comments"></i> استشارة تدريبية</button>
+    </div>
+
+    <!-- 1. تبويب توليد البرنامج -->
+    <div id="aiTabGenerator" class="ai-pane active">
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-trophy gold"></i> اختر الرياضة</label>
+        <select id="aiSportSelect"></select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="field">
+          <label><i class="fa-solid fa-ranking-star gold"></i> المستوى</label>
+          <select id="aiLevelSelect">
+            <option value="beginner">مبتدئ</option>
+            <option value="intermediate" selected>متوسط</option>
+            <option value="expert">متقدم / محترف</option>
+          </select>
+        </div>
+        <div class="field">
+          <label><i class="fa-solid fa-bullseye gold"></i> الهدف التدريبي</label>
+          <select id="aiGoalSelect">
+            <option value="strength">بناء قوة وتضخيم</option>
+            <option value="endurance">تحمل ولياقة بدنية</option>
+            <option value="speed">سرعة ورشاقة وتكنيك</option>
+            <option value="weightloss">تنشيف وحرق دهون</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-gold btn-block" type="button" id="aiGenerateBtn">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> توليد البرنامج الذكي
+      </button>
+
+      <div id="aiPlanResult" class="ai-result-box" style="display:none;margin-top:14px;"></div>
+    </div>
+
+    <!-- 2. تبويب التغذية الرياضية -->
+    <div id="aiTabNutrition" class="ai-pane" style="display:none;">
+      <div class="field" style="margin-bottom:12px;">
+        <label><i class="fa-solid fa-medal gold"></i> تخصص الرياضة</label>
+        <select id="aiNutSportSelect"></select>
+      </div>
+      <div id="aiNutContent" class="ai-nut-card"></div>
+      <button type="button" class="btn btn-gold btn-block" id="aiGoToNutritionTab" style="margin-top:14px;">
+        <i class="fa-solid fa-utensils"></i> الانتقال لبرنامج التغذية لحساب السعرات
+      </button>
+    </div>
+
+    <!-- 3. تبويب شات واستشارة المدرب -->
+    <div id="aiTabChat" class="ai-pane" style="display:none;">
+      <div id="aiChatHistory" class="ai-chat-history">
+        <div class="ai-msg bot">
+          <div class="ai-msg-head"><i class="fa-solid fa-robot"></i> كابتن AI</div>
+          <div class="ai-msg-body">أهلاً يا كابتن! أنا مساعدك الذكي في علوم التدريب والرياضة لجميع الرياضات الـ 18. اسألني عن أي تكنيك، أسلوب إحماء، علاج إجهاد، أو تنظيم تدريباتك وسأجيبك فوراً.</div>
+        </div>
+      </div>
+      <div class="ai-chat-input-bar">
+        <input type="text" id="aiChatInput" placeholder="اكتب سؤالك الرياضي أو التكنيك هنا...">
+        <button type="button" id="aiChatSendBtn" class="btn btn-gold"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+      <div class="ai-chat-chips">
+        <button type="button" class="ai-chip-prompt" data-prompt="كيف أزيد القوة الانفجارية في الرياضات القتالية؟">قوة انفجارية</button>
+        <button type="button" class="ai-chip-prompt" data-prompt="أفضل روتين إحماء وإطالات لتفادي الإصابات؟">روتين إحماء</button>
+        <button type="button" class="ai-chip-prompt" data-prompt="كيف أنظم جدول تمرين مع مباريات أسبوعية؟">تنظيم التدريب</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة إضافة تمرين مخصص جديد -->
+<div id="customExModal" class="modal top">
+  <div class="mbox" style="max-width: 500px;">
+    <button class="mclose" type="button" data-close="customExModal" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    <div class="mhead">
+      <h2><i class="fa-solid fa-plus-circle gold"></i> إضافة تمرين مخصص جديد</h2>
+      <p>أضف تمرينك الخاص وسيتم حفظه تلقائياً وإضافته لمكتبة التمارين</p>
+    </div>
+    <div style="padding: 16px 20px 24px; max-height: 75vh; overflow-y: auto;">
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-trophy gold"></i> الرياضة التابع لها التمرين</label>
+        <select id="cExSport"></select>
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-layer-group gold"></i> القسم أو العضلة</label>
+        <select id="cExCat"></select>
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-signature gold"></i> اسم التمرين بالعربي</label>
+        <input type="text" id="cExNameAr" placeholder="مثال: ضغط دمبلز بمستوى الصدر">
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-font gold"></i> اسم التمرين بالإنجليزي</label>
+        <input type="text" id="cExNameEn" placeholder="مثال: Dumbbell Flat Press">
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-ranking-star gold"></i> المستوى</label>
+        <select id="cExLevel">
+          <option value="beginner">مبتدئ</option>
+          <option value="intermediate" selected>متوسط</option>
+          <option value="expert">متقدم</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-circle-info gold"></i> فائدة التمرين وشرح مختصر</label>
+        <textarea id="cExDesc" rows="2" placeholder="اكتب فائدة التمرين وما يقويه..."></textarea>
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-list-ol gold"></i> خطوات الأداء والتكنيك (كل خطوة في سطر)</label>
+        <textarea id="cExHowto" rows="3" placeholder="1. الوضعية الابتدائية...&#10;2. طريقة التنفيذ والمدى الحركي...&#10;3. التنفس والإنهاء..."></textarea>
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label><i class="fa-solid fa-lightbulb gold"></i> نصائح هامة للمدرب واللاعب</label>
+        <input type="text" id="cExTips" placeholder="مثال: حافظ على استقامة الظهر ولا تقفل المفاصل">
+      </div>
+      <div class="field" style="margin-bottom:14px;">
+        <label><i class="fa-solid fa-triangle-exclamation gold"></i> أخطاء شائعة يجب تجنبها</label>
+        <input type="text" id="cExMistakes" placeholder="مثال: النزول السريع المفاجئ بدون تحكم">
+      </div>
+      <button type="button" id="saveCustomExBtn" class="btn btn-gold btn-block" style="padding:13px;">
+        <i class="fa-solid fa-circle-check"></i> حفظ التمرين وإضافته للمكتبة فوراً
+      </button>
+      <div id="saveCustomExStatus" style="margin-top:10px;text-align:center;font-size:12px;font-weight:bold;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- قاعدة بيانات الصور المضمنة لضمان التصدير 100% بدون أي أخطاء -->
+<script src="images_data.js"></script>
+<!-- قاعدة بيانات الرياضات والتمارين الشاملة والمساعد الذكي AI -->
+<script src="sports_data.js"></script>
+<!-- ملف الجافا سكريبت الشامل والكامل للموقع كله -->
+<script src="app.js"></script>
+</body>
+</html>
